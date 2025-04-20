@@ -134,11 +134,11 @@ export default function Sidebar({ position }: SidebarProps) {
 
   if (position === 'left') {
     return (
-      <div className="w-64 p-4 bg-yellow-50 dark:bg-gray-800 rounded-lg">
+      <div className="w-[420px] p-8 bg-yellow-50 dark:bg-gray-800 rounded-2xl">
         <h2 className="text-xl font-bold mb-4">Did You Know?</h2>
-        <div className="space-y-4">
+        <div className="space-y-4 text-xl">
           {facts.map((fact, index) => (
-            <p key={index} className="text-sm text-gray-700 dark:text-gray-300">
+            <p key={index} className="text-gray-700 dark:text-gray-300 font-medium">
               {fact}
             </p>
           ))}
@@ -149,10 +149,10 @@ export default function Sidebar({ position }: SidebarProps) {
 
   return (
     <>
-      <div className="w-64 p-4 bg-yellow-50 dark:bg-gray-800 rounded-lg">
-        <div className="mb-6">
-          <h2 className="text-xl font-bold mb-4">Leaderboard</h2>
-          <div className="flex flex-col gap-2">
+      <div className="w-[420px] p-8 bg-yellow-50 dark:bg-gray-800 rounded-2xl">
+        <div className="mb-10">
+          <h2 className="text-2xl font-bold mb-6">Leaderboard</h2>
+          <div className="flex flex-col gap-6 text-lg">
             {leaderboardLoading ? (
               <div className="text-gray-500 text-sm">Loading leaderboard...</div>
             ) : leaderboardError ? (
@@ -160,12 +160,12 @@ export default function Sidebar({ position }: SidebarProps) {
             ) : leaderboard.length > 0 ? (
               <>
                 <div className="flex items-center justify-between">
-                  <span className="text-blue-600 font-bold text-lg">X Wins</span>
-                  <span className="text-2xl">{leaderboard[0].xWins}</span>
+                  <span className="text-blue-600 font-extrabold text-2xl">X Wins</span>
+                  <span className="text-4xl font-extrabold">{leaderboard[0].xWins}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-pink-600 font-bold text-lg">O Wins</span>
-                  <span className="text-2xl">{leaderboard[0].oWins}</span>
+                  <span className="text-pink-600 font-extrabold text-2xl">O Wins</span>
+                  <span className="text-4xl font-extrabold">{leaderboard[0].oWins}</span>
                 </div>
               </>
             ) : (
@@ -174,35 +174,35 @@ export default function Sidebar({ position }: SidebarProps) {
           </div>
         </div>
 
-        <div>
-          <h2 className="text-xl font-bold mb-4">Live Chat</h2>
-          <div ref={chatRef} className="h-48 bg-white dark:bg-gray-700 rounded p-2 mb-2 overflow-y-auto">
+        <div className="mt-10">
+          <h2 className="text-2xl font-bold mb-6">Live Chat</h2>
+          <div ref={chatRef} className="h-64 bg-white dark:bg-gray-700 rounded-2xl p-5 mb-5 overflow-y-auto text-lg">
             {chatError ? (
               <p className="text-red-500 text-sm">{chatError}</p>
             ) : messages && messages.length > 0 ? (
               messages.map((message) => (
                 <div key={message.id} className="mb-2">
-                  <span className="font-bold text-sm">Player: </span>
-                  <span className="text-sm">{message.content}</span>
+                  <span className="font-extrabold text-xl">Player: </span>
+                  <span className="text-xl">{message.content}</span>
                 </div>
               ))
             ) : (
               <p className="text-gray-500 text-sm">No messages yet</p>
             )}
           </div>
-          <form onSubmit={handleSendMessage} className="flex gap-2">
+          <form onSubmit={handleSendMessage} className="flex gap-4 w-full mt-2">
             <input
               type="text"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Type a message..."
-              className="flex-1 p-2 rounded border dark:bg-gray-700 dark:border-gray-600"
+              className="flex-1 min-w-0 p-4 rounded-xl border text-lg dark:bg-gray-700 dark:border-gray-600"
               disabled={isLoading}
             />
             <button 
               type="submit"
               disabled={isLoading}
-              className="px-4 py-2 bg-primary text-white rounded hover:opacity-90 disabled:opacity-50"
+              className="px-7 py-3 bg-primary text-white rounded-2xl text-lg font-semibold hover:opacity-90 disabled:opacity-50"
             >
               Send
             </button>
