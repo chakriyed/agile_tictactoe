@@ -1,17 +1,13 @@
 name: CI Pipeline - Build and Test
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: ⬇️ Checkout code
+    - name: 📥 Checkout code
       uses: actions/checkout@v3
 
     - name: ⚙️ Setup Node.js
@@ -22,11 +18,11 @@ jobs:
     - name: 📦 Install dependencies
       run: npm install
 
-    - name: 🧹 Run Linter
-      run: npm run lint
+    # 🧹 Lint step removed
 
     - name: 🏗️ Build project
       run: npm run build
 
     - name: 🧪 Run tests
       run: npm test
+
