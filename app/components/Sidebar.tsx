@@ -17,18 +17,18 @@ interface Message {
 }
 
 interface LeaderboardEntry {
-  email: string;
-  wins: number;
-  losses: number;
-  draws: number;
+  xWins: number;
+  oWins: number;
 }
 
 export default function Sidebar({ position }: SidebarProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [leaderboardLoading, setLeaderboardLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [chatError, setChatError] = useState<string | null>(null);
+  const [leaderboardError, setLeaderboardError] = useState<string | null>(null);
   const chatRef = useRef<HTMLDivElement>(null);
   
 
@@ -48,28 +48,41 @@ export default function Sidebar({ position }: SidebarProps) {
           // Fetch messages
           const messagesRes = await fetch('/api/chat');
           if (!messagesRes.ok) {
-            throw new Error('Failed to fetch messages');
-          }
-          const messagesData = await messagesRes.json();
-          if (Array.isArray(messagesData)) {
-            setMessages(messagesData);
-            setError(null);
+            setChatError('Failed to fetch messages');
+            setMessages([]);
           } else {
-            throw new Error('Invalid messages data format');
+            const messagesData = await messagesRes.json();
+            if (Array.isArray(messagesData)) {
+              setMessages(messagesData);
+              setChatError(null);
+            } else {
+              setChatError('Invalid messages data format');
+              setMessages([]);
+            }
           }
 
           // Fetch leaderboard
           const leaderboardRes = await fetch('/api/leaderboard');
           if (!leaderboardRes.ok) {
-            throw new Error('Failed to fetch leaderboard');
+            setLeaderboardError('Failed to fetch leaderboard');
+            setLeaderboard([]);
+          } else {
+            const leaderboardData = await leaderboardRes.json();
+            console.log('Leaderboard API response:', leaderboardData);
+            if (Array.isArray(leaderboardData)) {
+              setLeaderboard(leaderboardData);
+              setLeaderboardError(null);
+            } else {
+              setLeaderboardError('Invalid leaderboard data format');
+              setLeaderboard([]);
+            }
           }
-          const leaderboardData = await leaderboardRes.json();
-          if (Array.isArray(leaderboardData)) {
-            setLeaderboard(leaderboardData);
-          }
+          setLeaderboardLoading(false);
         } catch (error) {
           console.error('Error fetching data:', error);
-          setError(error instanceof Error ? error.message : 'An error occurred');
+          setChatError('Failed to fetch messages');
+          setLeaderboardError('Failed to fetch leaderboard');
+          setLeaderboardLoading(false);
         }
       };
 
@@ -110,10 +123,10 @@ export default function Sidebar({ position }: SidebarProps) {
       const message = await res.json();
       setMessages(prev => [...prev, message]);
       setNewMessage('');
-      setError(null);
+      setChatError(null);
     } catch (error) {
       console.error('Error sending message:', error);
-      setError(error instanceof Error ? error.message : 'Failed to send message');
+      setChatError(error instanceof Error ? error.message : 'Failed to send message');
     } finally {
       setIsLoading(false);
     }
@@ -135,53 +148,67 @@ export default function Sidebar({ position }: SidebarProps) {
   }
 
   return (
-    <div className="w-64 p-4 bg-yellow-50 dark:bg-gray-800 rounded-lg">
-      <div className="mb-6">
-        <h2 className="text-xl font-bold mb-4">Leaderboard</h2>
-        <div className="space-y-2">
-          {leaderboard.map((entry, index) => (
-            <div key={index} className="flex justify-between text-sm">
-              <span>{entry.email.split('@')[0]}</span>
-              <span>{entry.wins} Wins</span>
-            </div>
-          ))}
+    <>
+      <div className="w-64 p-4 bg-yellow-50 dark:bg-gray-800 rounded-lg">
+        <div className="mb-6">
+          <h2 className="text-xl font-bold mb-4">Leaderboard</h2>
+          <div className="flex flex-col gap-2">
+            {leaderboardLoading ? (
+              <div className="text-gray-500 text-sm">Loading leaderboard...</div>
+            ) : leaderboardError ? (
+              <div className="text-red-500 text-sm">{leaderboardError}</div>
+            ) : leaderboard.length > 0 ? (
+              <>
+                <div className="flex items-center justify-between">
+                  <span className="text-blue-600 font-bold text-lg">X Wins</span>
+                  <span className="text-2xl">{leaderboard[0].xWins}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-pink-600 font-bold text-lg">O Wins</span>
+                  <span className="text-2xl">{leaderboard[0].oWins}</span>
+                </div>
+              </>
+            ) : (
+              <div className="text-gray-500 text-sm">No leaderboard data available.</div>
+            )}
+          </div>
         </div>
-      </div>
 
-      <div>
-        <h2 className="text-xl font-bold mb-4">Live Chat</h2>
-        <div ref={chatRef} className="h-48 bg-white dark:bg-gray-700 rounded p-2 mb-2 overflow-y-auto">
-          {error ? (
-            <p className="text-red-500 text-sm">{error}</p>
-          ) : messages && messages.length > 0 ? (
-            messages.map((message) => (
-              <div key={message.id} className="mb-2">
-                <span className="font-bold text-sm">Player: </span>
-                <span className="text-sm">{message.content}</span>
-              </div>
-            ))
-          ) : (
-            <p className="text-gray-500 text-sm">No messages yet</p>
-          )}
+        <div>
+          <h2 className="text-xl font-bold mb-4">Live Chat</h2>
+          <div ref={chatRef} className="h-48 bg-white dark:bg-gray-700 rounded p-2 mb-2 overflow-y-auto">
+            {chatError ? (
+              <p className="text-red-500 text-sm">{chatError}</p>
+            ) : messages && messages.length > 0 ? (
+              messages.map((message) => (
+                <div key={message.id} className="mb-2">
+                  <span className="font-bold text-sm">Player: </span>
+                  <span className="text-sm">{message.content}</span>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 text-sm">No messages yet</p>
+            )}
+          </div>
+          <form onSubmit={handleSendMessage} className="flex gap-2">
+            <input
+              type="text"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Type a message..."
+              className="flex-1 p-2 rounded border dark:bg-gray-700 dark:border-gray-600"
+              disabled={isLoading}
+            />
+            <button 
+              type="submit"
+              disabled={isLoading}
+              className="px-4 py-2 bg-primary text-white rounded hover:opacity-90 disabled:opacity-50"
+            >
+              Send
+            </button>
+          </form>
         </div>
-        <form onSubmit={handleSendMessage} className="flex gap-2">
-          <input
-            type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Type a message..."
-            className="flex-1 p-2 rounded border dark:bg-gray-700 dark:border-gray-600"
-            disabled={isLoading}
-          />
-          <button 
-            type="submit"
-            disabled={isLoading}
-            className="px-4 py-2 bg-primary text-white rounded hover:opacity-90 disabled:opacity-50"
-          >
-            Send
-          </button>
-        </form>
       </div>
-    </div>
+    </>
   );
 } 

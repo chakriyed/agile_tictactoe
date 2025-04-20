@@ -91,6 +91,18 @@ export default function GameBoard({ hintsEnabled }: GameBoardProps) {
   };
 
   const winner = calculateWinner(board);
+
+  // Increment leaderboard on win
+  useEffect(() => {
+    if (winner === 'X' || winner === 'O') {
+      fetch('/api/leaderboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ winner }),
+      });
+    }
+  }, [winner]);
+
   const status = winner
     ? `Winner: ${winner}`
     : board.every(square => square)
