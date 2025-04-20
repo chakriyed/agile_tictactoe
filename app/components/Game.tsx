@@ -5,7 +5,9 @@ import { checkWinner, getBestMove } from '../utils/minimax';
 import DifficultySelector from './DifficultySelector';
 
 export default function Game() {
-  const [board, setBoard] = useState<(string | null)[]>(Array(9).fill(null));
+  // Use a strict Board type allowing 'X', 'O', or null
+  type Board = ('X' | 'O' | null)[];
+  const [board, setBoard] = useState<Board>(Array(9).fill(null));
   const [isXNext, setIsXNext] = useState(true);
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard' | null>(null);
   const [gameStatus, setGameStatus] = useState<'playing' | 'won' | 'draw'>('playing');
