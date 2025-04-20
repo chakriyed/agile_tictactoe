@@ -136,7 +136,7 @@ export default function Sidebar({ position }: SidebarProps) {
 
   if (position === 'left') {
     return (
-      <div className="w-[420px] p-8 bg-yellow-50 dark:bg-gray-800 rounded-2xl">
+      <div className="w-[420px] p-8 bg-yellow-50/80 dark:bg-gray-800 rounded-2xl">
         <h2 className="text-xl font-bold mb-4">Did You Know?</h2>
         <div className="space-y-4 text-xl">
           {facts.map((fact, index) => (
@@ -151,7 +151,7 @@ export default function Sidebar({ position }: SidebarProps) {
 
   return (
     <>
-      <div className="w-[420px] p-8 bg-yellow-50 dark:bg-gray-800 rounded-2xl">
+      <div className="w-[420px] p-8 bg-yellow-50/80 dark:bg-gray-800 rounded-2xl">
         <div className="mb-10">
           <h2 className="text-2xl font-bold mb-6">Leaderboard</h2>
           <div className="flex flex-col gap-6 text-lg">
@@ -178,7 +178,7 @@ export default function Sidebar({ position }: SidebarProps) {
 
         <div className="mt-10">
           <h2 className="text-2xl font-bold mb-6">Live Chat</h2>
-          <div ref={chatRef} className="h-64 bg-white dark:bg-gray-700 rounded-2xl p-5 mb-5 overflow-y-auto text-lg">
+          <div ref={chatRef} className="h-64 bg-white/80 dark:bg-gray-700 rounded-2xl p-5 mb-5 overflow-y-auto text-lg">
             {chatError ? (
               <p className="text-red-500 text-sm">{chatError}</p>
             ) : messages && messages.length > 0 ? (
@@ -214,7 +214,7 @@ export default function Sidebar({ position }: SidebarProps) {
           <div className="w-full mt-3">
             <button
               type="button"
-              className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-white dark:bg-gray-700 text-xl font-sans font-semibold shadow-md mb-2 transition hover:bg-yellow-100 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-white/80 dark:bg-gray-700 text-xl font-sans font-semibold shadow-md mb-2 transition hover:bg-yellow-100 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-primary"
               onClick={() => setShowEmojiPicker((v) => !v)}
             >
               <span role="img" aria-label="emoji">😊</span>

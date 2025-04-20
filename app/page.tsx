@@ -16,6 +16,7 @@ function removeUserCookie() {
   document.cookie = 'user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
 }
 import Sidebar from './components/Sidebar';
+import BackgroundPattern from './components/BackgroundPattern';
 
 import { useRouter } from 'next/navigation';
 
@@ -53,7 +54,8 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen p-4">
+    <main className="min-h-screen p-4" style={{ position: 'relative', overflow: 'hidden' }}>
+      <BackgroundPattern />
       <Navbar
         username={username || ''}
         onLogout={handleLogout}
