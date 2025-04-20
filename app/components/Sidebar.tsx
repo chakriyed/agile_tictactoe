@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import EmojiPicker from 'emoji-picker-react';
 
 
 interface SidebarProps {
@@ -25,6 +26,7 @@ export default function Sidebar({ position }: SidebarProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [leaderboardLoading, setLeaderboardLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [chatError, setChatError] = useState<string | null>(null);
@@ -190,6 +192,7 @@ export default function Sidebar({ position }: SidebarProps) {
               <p className="text-gray-500 text-sm">No messages yet</p>
             )}
           </div>
+
           <form onSubmit={handleSendMessage} className="flex gap-4 w-full mt-2">
             <input
               type="text"
@@ -207,6 +210,27 @@ export default function Sidebar({ position }: SidebarProps) {
               Send
             </button>
           </form>
+          {/* Emoji Picker Toggle and Picker BELOW input */}
+          <div className="w-full mt-3">
+            <button
+              type="button"
+              className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-white dark:bg-gray-700 text-xl font-sans font-semibold shadow-md mb-2 transition hover:bg-yellow-100 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-primary"
+              onClick={() => setShowEmojiPicker((v) => !v)}
+            >
+              <span role="img" aria-label="emoji">😊</span>
+              <span>{showEmojiPicker ? 'Close Emoji Picker' : 'Send an emoji?'}</span>
+            </button>
+            {showEmojiPicker && (
+              <div className="w-full max-w-full mt-2">
+                <EmojiPicker
+                  onEmojiClick={(emojiData) => setNewMessage((msg) => msg + emojiData.emoji)}
+                  height={350}
+                  width="100%"
+                  style={{ width: '100%' }}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>
