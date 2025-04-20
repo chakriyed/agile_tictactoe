@@ -5,7 +5,19 @@ import GameBoard from './components/GameBoard';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 
+import { useRouter } from 'next/navigation';
+
 export default function Home() {
+  const router = useRouter();
+  // Check authentication on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const user = localStorage.getItem('user');
+      if (!user) {
+        router.push('/login');
+      }
+    }
+  }, [router]);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   const toggleDarkMode = () => {
