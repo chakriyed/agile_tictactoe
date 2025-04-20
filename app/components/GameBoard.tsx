@@ -15,6 +15,7 @@ export default function GameBoard() {
   const [gameMode, setGameMode] = useState<'ai' | 'player'>('player');
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard' | null>(null);
   const [showDifficultySelector, setShowDifficultySelector] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   useEffect(() => {
     // Update window size
@@ -144,7 +145,45 @@ export default function GameBoard() {
         >
           Multiplayer
         </button>
+        <button
+          onClick={() => setShowTutorial(true)}
+          className="px-6 py-2 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition-colors"
+        >
+          Tutorial
+        </button>
       </div>
+
+      {/* Tutorial Modal */}
+      {showTutorial && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
+          <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg max-w-md w-full relative">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 dark:hover:text-white text-2xl font-bold"
+              onClick={() => setShowTutorial(false)}
+              aria-label="Close tutorial"
+            >
+              ×
+            </button>
+            <h2 className="text-3xl font-bold mb-4 text-primary">How to Play Tic Tac Toe</h2>
+            <ul className="list-disc list-inside text-lg text-gray-700 dark:text-gray-200 space-y-2 mb-2">
+              <li>The game is played on a 3x3 grid.</li>
+              <li>Players take turns placing their symbol (X or O) in empty squares.</li>
+              <li>The first player to get three of their symbols in a row (horizontally, vertically, or diagonally) wins.</li>
+              <li>If all 9 squares are filled and no player has three in a row, the game ends in a draw.</li>
+              <li>Use "Play vs AI" to play against the computer, or "Multiplayer" to play with a friend on the same device.</li>
+            </ul>
+            <div className="text-center mt-4">
+              <button
+                onClick={() => setShowTutorial(false)}
+                className="px-4 py-2 bg-primary text-white rounded hover:opacity-90 transition-opacity"
+              >
+                Got it!
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {winner && (
         <>
