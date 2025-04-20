@@ -2,13 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import Confetti from 'react-confetti';
-import { checkWinner, getBestMove } from '../utils/minimax';
+import { checkWinner, getBestMove, getMoveWinProbs } from '../utils/minimax';
 import DifficultySelector from './DifficultySelector';
 import { motion } from 'framer-motion';
 
 type Player = 'X' | 'O' | null;
 
-export default function GameBoard() {
+import { getAvailableMoves } from '../utils/minimax';
+
+interface GameBoardProps {
+  hintsEnabled: boolean;
+}
+
+export default function GameBoard({ hintsEnabled }: GameBoardProps) {
   const [board, setBoard] = useState<Player[]>(Array(9).fill(null));
   const [isXNext, setIsXNext] = useState(true);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
@@ -212,16 +218,44 @@ export default function GameBoard() {
 
       <div className="text-xl text-center mb-4">{status}</div>
       <div className="game-board">
-        {board.map((value, index) => (
-          <button
-            key={index}
-            className="game-cell"
-            onClick={() => handleClick(index)}
-            disabled={Boolean(!isXNext && gameMode === 'ai')}
-          >
-            {value}
-          </button>
-        ))}
+        {(() => {
+          let hintMoves: { move: number; prob: number }[] = [];
+          let hintPlayer: Player = isXNext ? 'X' : 'O';
+          if (hintsEnabled && !winner && ((gameMode === 'player') || (gameMode === 'ai' && isXNext))) {
+            hintMoves = getMoveWinProbs(board, hintPlayer);
+          }
+          return board.map((value, index) => {
+            const hint = hintMoves.find(h => h.move === index);
+            return (
+              <button
+                key={index}
+                className={`game-cell${hint ? ' border-4 border-yellow-400 animate-pulse relative' : ''}`}
+                onClick={() => handleClick(index)}
+                disabled={Boolean(!isXNext && gameMode === 'ai')}
+              >
+                {value ? (
+                  value
+                ) : hint ? (
+                  <>
+                    <span
+                      className={`absolute inset-0 flex items-center justify-center w-full h-full text-5xl font-extrabold ${hintPlayer === 'X' ? 'text-blue-400' : 'text-pink-400'} drop-shadow-lg pointer-events-none`}
+                      style={{ opacity: 0.22 }}
+                    >
+                      {hintPlayer}
+                    </span>
+                    <span
+                      className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-sm font-bold px-3 py-1 rounded-full shadow-lg border-2 border-white z-10 cursor-help"
+                      title={`If you play here, win chance: ${hint.prob}%`}
+                      style={{ opacity: 0.96 }}
+                    >
+                      {hint.prob}%
+                    </span>
+                  </>
+                ) : null}
+              </button>
+            );
+          });
+        })()}
       </div>
 
       {!winner && board.every(square => square) && (

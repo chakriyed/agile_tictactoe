@@ -4,6 +4,14 @@ import { useState, useEffect } from 'react';
 import GameBoard from './components/GameBoard';
 import Navbar from './components/Navbar';
 
+// Add type for Navbar
+interface NavbarProps {
+  username: string;
+  onLogout: () => void;
+  hintsEnabled: boolean;
+  setHintsEnabled: (enabled: boolean) => void;
+}
+
 function removeUserCookie() {
   document.cookie = 'user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
 }
@@ -31,6 +39,7 @@ export default function Home() {
     }
   }, [router]);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [hintsEnabled, setHintsEnabled] = useState(false);
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -45,7 +54,12 @@ export default function Home() {
 
   return (
     <main className="min-h-screen p-4">
-      <Navbar username={username || ''} onLogout={handleLogout} />
+      <Navbar
+        username={username || ''}
+        onLogout={handleLogout}
+        hintsEnabled={hintsEnabled}
+        setHintsEnabled={setHintsEnabled}
+      />
       <button
         onClick={toggleDarkMode}
         className="block mx-auto mb-8 px-6 py-2 bg-primary text-white rounded-full hover:opacity-90 transition-opacity"
@@ -54,7 +68,7 @@ export default function Home() {
       </button>
       <div className="flex gap-8">
         <Sidebar position="left" />
-        <GameBoard />
+        <GameBoard hintsEnabled={hintsEnabled} />
         <Sidebar position="right" />
       </div>
     </main>

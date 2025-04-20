@@ -34,7 +34,7 @@ function isBoardFull(board: Board): boolean {
 }
 
 // Get available moves
-function getAvailableMoves(board: Board): number[] {
+export function getAvailableMoves(board: Board): number[] {
   return board.reduce<number[]>((moves, cell, index) => {
     if (cell === null) moves.push(index);
     return moves;
@@ -92,6 +92,39 @@ function minimax(
     }
     return { score: bestScore, move: bestMove };
   }
+}
+
+// Returns [{move, prob}] for each possible move for the given player
+export function getMoveWinProbs(board: Board, player: Player): { move: number; prob: number }[] {
+  const availableMoves = getAvailableMoves(board);
+  if (availableMoves.length === 0) return [];
+
+  // For each move, simulate and run minimax
+  const maxDepth = 8;
+  const scores = availableMoves.map(move => {
+    const newBoard = [...board];
+    newBoard[move] = player;
+    // If player is 'O', maximizing; if 'X', minimizing
+    const result = minimax(
+      newBoard,
+      0,
+      maxDepth,
+      player === 'O' ? false : true // next turn is for the other player
+    );
+    return { move, score: result.score };
+  });
+
+  // Normalize scores to probabilities
+  let minScore = Math.min(...scores.map(s => s.score));
+  let maxScore = Math.max(...scores.map(s => s.score));
+  // Avoid division by zero
+  if (maxScore === minScore) maxScore = minScore + 1;
+  return scores.map(({ move, score }) => ({
+    move,
+    prob: player === 'O'
+      ? Math.round(((score - minScore) / (maxScore - minScore)) * 100)
+      : Math.round(((maxScore - score) / (maxScore - minScore)) * 100)
+  }));
 }
 
 export function getBestMove(board: Board, difficulty: 'easy' | 'medium' | 'hard'): number {
