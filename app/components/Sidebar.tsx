@@ -6,6 +6,7 @@ import EmojiPicker from 'emoji-picker-react';
 
 interface SidebarProps {
   position: 'left' | 'right';
+  customizer?: React.ReactNode;
 }
 
 interface Message {
@@ -22,7 +23,7 @@ interface LeaderboardEntry {
   oWins: number;
 }
 
-export default function Sidebar({ position }: SidebarProps) {
+export default function Sidebar({ position, customizer }: SidebarProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
@@ -137,6 +138,7 @@ export default function Sidebar({ position }: SidebarProps) {
   if (position === 'left') {
     return (
       <div className="w-[420px] p-8 bg-yellow-50/80 dark:bg-gray-800 rounded-2xl">
+        {customizer && <div className="mb-6">{customizer}</div>}
         <h2 className="text-xl font-bold mb-4">Did You Know?</h2>
         <div className="space-y-4 text-xl">
           {facts.map((fact, index) => (

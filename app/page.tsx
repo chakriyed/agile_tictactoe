@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import GameBoard from './components/GameBoard';
+import ColorCustomizer from './components/ColorCustomizer';
 import Navbar from './components/Navbar';
 
 // Add type for Navbar
@@ -41,6 +42,8 @@ export default function Home() {
   }, [router]);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [hintsEnabled, setHintsEnabled] = useState(false);
+  const [xColor, setXColor] = useState('#222222');
+  const [oColor, setOColor] = useState('#222222');
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -54,7 +57,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen p-4" style={{ position: 'relative', overflow: 'hidden' }}>
+    <main className="min-h-screen p-0" style={{ position: 'relative', overflow: 'hidden' }}>
       <BackgroundPattern />
       <Navbar
         username={username || ''}
@@ -68,9 +71,16 @@ export default function Home() {
       >
         Toggle Dark Mode
       </button>
-      <div className="flex gap-8">
+      <div className="absolute top-1 left-0 z-10 w-[420px]">
+        <div className="w-full p-4 bg-yellow-50/80 rounded-2xl shadow">
+          <ColorCustomizer xColor={xColor} oColor={oColor} setXColor={setXColor} setOColor={setOColor} />
+        </div>
+      </div>
+      <div className="flex gap-8 mt-0">
         <Sidebar position="left" />
-        <GameBoard hintsEnabled={hintsEnabled} />
+        <div className="flex-1">
+          <GameBoard hintsEnabled={hintsEnabled} xColor={xColor} oColor={oColor} />
+        </div>
         <Sidebar position="right" />
       </div>
     </main>

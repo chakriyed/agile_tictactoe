@@ -12,9 +12,11 @@ import { getAvailableMoves } from '../utils/minimax';
 
 interface GameBoardProps {
   hintsEnabled: boolean;
+  xColor?: string;
+  oColor?: string;
 }
 
-export default function GameBoard({ hintsEnabled }: GameBoardProps) {
+export default function GameBoard({ hintsEnabled, xColor = '#222', oColor = '#222' }: GameBoardProps) {
   const [board, setBoard] = useState<Player[]>(Array(9).fill(null));
   const [isXNext, setIsXNext] = useState(true);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
@@ -246,7 +248,9 @@ export default function GameBoard({ hintsEnabled }: GameBoardProps) {
                 disabled={Boolean(!isXNext && gameMode === 'ai')}
               >
                 {value ? (
-                  value
+                  <span style={{ color: value === 'X' ? xColor : oColor }}>
+                    {value}
+                  </span>
                 ) : hint ? (
                   <>
                     <span
