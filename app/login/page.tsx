@@ -31,6 +31,8 @@ export default function LoginPage() {
         return;
       }
       localStorage.setItem('user', JSON.stringify({ username, userId: data.userId }));
+      // Set a cookie for server-side auth (expires in 7 days)
+      document.cookie = `user=${data.userId}; path=/; max-age=${60 * 60 * 24 * 7}`;
       setIsSuccess(true);
       setMessage('Login successful! Redirecting...');
       setTimeout(() => {
